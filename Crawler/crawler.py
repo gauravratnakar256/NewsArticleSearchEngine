@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+from matplotlib.pyplot import get
 
 try:
     import urllib.request as urllib2
@@ -7,6 +8,7 @@ except ImportError:
 import re
 from collections import deque
 import json
+import os.path
 
 
 class Crawler:
@@ -15,7 +17,24 @@ class Crawler:
         self.__url_map = {}
         self.__threshold_words = threshold_words
         self.__json_data = []
-        self.__block_number = 0
+
+    
+    def __get_visited_urls(self, url_per_file):
+        file_exists = os.path.exists('data/article_map.json')
+        if file_exists:
+            with open('data/article_map.json', 'r') as article_map:
+                self.__url_map = json.load(article_map)
+                self.__global_index = len(self.__url_map)
+                print(self.__global_index)
+                last_url = list(self.__url_map.keys())[-1]
+                print('last visited url {0}'.format(last_url))
+                self.__block_number = int(self.__global_index/url_per_file)+1
+                return last_url
+        else:
+            self.__url_map = {}
+            self.__global_index = 0
+            self.__block_number = 0
+            return None
 
     def __write_json(self):
         filename = "data/block_" + str(self.__block_number) + ".json"
@@ -24,6 +43,12 @@ class Crawler:
             json.dump(self.__json_data, outfile)
             outfile.close()
             self.__json_data = []
+
+    def __write_urls(self):
+        filename = "data/article_map.json"
+        with open(filename, "w") as outfile:
+            json.dump(self.__url_map, outfile)
+            outfile.close()
 
     def __remove_excess(self, url_list):
         final_list = []
@@ -108,6 +133,19 @@ class Crawler:
         else:
             return False
 
+    def __extract_href_for_last_visited_url(self, last_visited_url):
+        href_links = []
+        try:
+            request = urllib2.urlopen(last_visited_url)
+            data_received = request.read()
+            href_links = self.__extract_href(data_received)
+            href_links = self.__remove_excess(href_links)
+        except Exception:
+            print("Exception extractig href for last visited urls")
+            pass
+        return href_links
+
+
     def __crawl_website(self, url, current_index):
         href_links = []
         flag = False
@@ -123,28 +161,40 @@ class Crawler:
             pass
         return href_links, flag
 
-    def __bfs(self, start_url, url_limit):
-        global_crawl_index = 0
-        self.__url_queue.append(start_url)
-        while global_crawl_index != url_limit + 1:
-            if len(self.__url_queue) == 0:
-                print("URL size=0")
-                break
-            url = self.__url_queue.popleft()
-            if url not in self.__url_map:
-                self.__url_map[url] = True
+    def __bfs(self, start_url, url_limit, url_per_file):
+        try:
+            global_crawl_index = self.__global_index+1
+            self.__url_queue.append(start_url)
+            url_limit = url_limit - len(self.__url_map)
+            while global_crawl_index < url_limit:
+                if len(self.__url_queue) == 0:
+                    print("URL size=0")
+                    break
+                url = self.__url_queue.popleft()
+                if url not in self.__url_map:
+                    self.__url_map[url] = True
 
-                current_index = global_crawl_index
-                href_list, should_increment_crawler_index = self.__crawl_website(url, current_index)
-                self.__url_queue.extend(href_list)
+                    current_index = global_crawl_index
+                    href_list, should_increment_crawler_index = self.__crawl_website(url, current_index)
+                    self.__url_queue.extend(href_list)
 
-                if should_increment_crawler_index:
-                    global_crawl_index += 1
-                    if global_crawl_index % 10 == 0:
-                        self.__write_json()
-        self.__write_json()
+                    if should_increment_crawler_index:
+                        global_crawl_index += 1
+                        if global_crawl_index % url_per_file == 0:
+                            self.__write_json()
+            self.__write_json()
+            self.__write_urls()
+        except:
+            print ('Error occurred')
+            self.__write_json()
+            self.__write_urls()
 
-    def crawl(self, start, url_limit):
+    def crawl(self, start, url_limit, url_per_file):
         self.__url_queue = deque()
-        self.__url_map = {}
-        self.__bfs(start, url_limit)
+        start_url = self.__get_visited_urls(url_per_file)
+        if start_url is not None:
+            start = start_url
+        if (start_url):
+            href_list = self.__extract_href_for_last_visited_url(start_url)
+            self.__url_queue.extend(href_list)
+        self.__bfs(start, url_limit, url_per_file)
