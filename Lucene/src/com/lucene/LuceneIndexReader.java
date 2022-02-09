@@ -72,6 +72,7 @@ public class LuceneIndexReader {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("Rank", rank + 1);
 			jsonObject.put("Score", hits[rank].score);
+			jsonObject.put("articleTitle", hitDoc.get("articleTitle"));
 			jsonObject.put("articleBody", hitDoc.get("articleBody"));
 			jsonObject.put("articleUrl", hitDoc.get("articleUrl"));
 			jsonArray.add(jsonObject);

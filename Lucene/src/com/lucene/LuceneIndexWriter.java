@@ -43,7 +43,6 @@ public class LuceneIndexWriter {
 		IndexWriter indexWriter = openIndex();
 		for (File f : files) {
 			JSONArray jsonObjects = parseJSONFile(f.getName());
-            System.out.println(jsonObjects);
 			addDocuments(jsonObjects, indexWriter);
 		}
 
@@ -87,6 +86,7 @@ public class LuceneIndexWriter {
 			URLOptions.setStored(true);
 			
 			doc.add(new TextField("articleBody", (String) object.get("articleBody"), Field.Store.YES));
+			doc.add(new TextField("articleTitle", (String) object.get("articleTitle"), Field.Store.YES));
 			doc.add(new Field("articleUrl", (String) object.get("articleUrl"), URLOptions));
 			indexWriter.addDocument(doc);
 			//String term = String.valueOf(object.get("articleID"));
