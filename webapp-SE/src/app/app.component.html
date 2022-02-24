@@ -1,0 +1,67 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div class="container bg">
+    <div style="text-align:center" class="content">
+        <h1>
+            Welcome to {{title}}!
+        </h1>
+    </div>
+    <section>
+        <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+            <div #queryInput class="form-group">
+                <label>Please enter the serach query below!</label>
+                <input type="text" formControlName="searchInput" class="form-control" [class.is-invalid]="searchInput.invalid && searchInput.touched" />
+                <div *ngIf="
+                      (searchInput.invalid && searchInput.touched) ||
+                      searchInput.dirty
+                    ">
+                    <small *ngIf="searchInput.errors?.required" class="text-danger">Input query is required</small>
+                </div>
+            </div>
+            <div #searchType class="form-group">
+                <label>Please select the search engine type!</label>
+                <div class="row">
+                    <div class="col">
+                      <input
+                        id="lucene"
+                        type="radio"
+                        [checked]
+                        value="lucene"
+                        name="searchType"
+                        formControlName="searchType"
+                        (change)="changeSearchType($event)"
+                      />
+                      <label class="radio-label" for="myself">Lucene</label>
+                    </div>
+                    <div class="col">
+                      <input
+                        id="hadoop"
+                        type="radio"
+                        value="hadoop"
+                        name="searchType"
+                        formControlName="searchType"
+                        (change)="changeSearchType($event)"
+                      />
+                      <label class="radio-label" for="others">Hadoop</label>
+                    </div>
+                  </div>
+                  <div class="form-group center-align">
+                    <button
+                      [disabled]="loading || searchForm.invalid"
+                      class="btn"
+                      [ngClass]="{
+                        'btn-secondary': searchForm.invalid,
+                        'btn-primary': !searchForm.invalid
+                      }"
+                    >
+                      <span
+                        *ngIf="loading"
+                        class="spinner-border spinner-border-sm mr-1"
+                      ></span>
+                      Search
+                    </button>
+                  </div>
+            </div>
+        </form>
+    </section>
+    <router-outlet></router-outlet>
+</div>
