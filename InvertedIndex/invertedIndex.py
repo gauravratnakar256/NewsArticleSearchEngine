@@ -52,5 +52,14 @@ class InvertedIndex:
 invertedIndex = InvertedIndex()
 invertedIndex.createInvertedIndex()
 
+'''
+Inverted Index Structure
+word:{
+    block:{
+        articleID:frequency
+    }
+}
+'''
+
 
 
