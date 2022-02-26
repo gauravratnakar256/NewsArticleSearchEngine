@@ -41,5 +41,28 @@
     </form>
   </section>
   <hr *ngIf="!flag">
+  <div *ngIf="!loadPage" class="spinner-div">
+    <span class="spinner-span spinner-border spinner-border-lg"></span>
+  </div>
+  <section *ngIf="loadPage">
+    <div *ngIf="hasResult">
+      <span *ngFor="let article of news">
+        <div class="card">
+          <div class="card-body">
+            <a href="{{article.articleUrl}}" target="_blank" rel="noopener noreferrer" class="card-link">{{article.articleTitle}}</a>
+            <p class="card-text overflow">{{article.articleBody}}</p>
+            <label class="card-link green">{{article.articleUrl}}</label>
+          </div>
+        </div>
+      </span>
+    </div>
+    <div *ngIf="!hasResult && !flag" class="text-center">
+      <h4>No result found, please try other query!</h4>
+    </div>
+    <div *ngIf="!flag">
+      <button *ngIf="showPrev" class="btn btn-secondary float-left" (click)="previous()">Previous</button>
+      <button *ngIf="showNext" class="btn btn-secondary float-right" (click)="next()">Next</button>
+    </div>
+  </section>
   <router-outlet></router-outlet>
 </div>
