@@ -9,6 +9,10 @@
     margin-left: 0.5rem;
 }
 
+.float-right {
+    float: right;
+}
+
 .center {
     margin-top: 30vh;
 }
@@ -19,4 +23,16 @@
 
 .center-align{
     margin-left: 45%;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.input-div {
+    display: flex;
+}
+
+button {
+    margin-left: 0.5rem;
 }
