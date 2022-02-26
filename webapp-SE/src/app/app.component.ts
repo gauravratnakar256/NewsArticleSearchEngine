@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
   public loadPage: boolean = true;
   private pageYoffset: any;
 
-  @HostListener('window:scroll', ['$event']) onScroll(event){
+  @HostListener('window:scroll', ['$event']) onScroll(event: any){
     this.pageYoffset = window.pageYOffset;
  }
 
