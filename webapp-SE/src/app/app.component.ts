@@ -11,6 +11,7 @@ export class AppComponent implements OnInit {
   public searchForm: any;
   private searchTypeLucene: boolean = true;
   public loading: boolean = false;
+  public flag: boolean = true;
 
   constructor(
     private formBuilder: FormBuilder
@@ -40,6 +41,7 @@ export class AppComponent implements OnInit {
     }
     this.loading = true;
     this.loading = false;
+    this.flag = false;
   }
 
   get searchInput() {

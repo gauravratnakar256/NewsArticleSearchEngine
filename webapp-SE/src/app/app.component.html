@@ -1,12 +1,14 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<div class="container bg">
+<div class="container bg" [ngClass]="{
+  'center': flag
+}">
     <div style="text-align:center" class="content">
         <h1>
             Welcome to {{title}}!
         </h1>
     </div>
     <section>
-        <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="input-box">
             <div #queryInput class="form-group">
                 <label>Please enter the serach query below!</label>
                 <input type="text" formControlName="searchInput" class="form-control" [class.is-invalid]="searchInput.invalid && searchInput.touched" />
@@ -62,6 +64,9 @@
                   </div>
             </div>
         </form>
+    </section>
+    <section *ngIF="!flag">
+      <hr>
     </section>
     <router-outlet></router-outlet>
 </div>

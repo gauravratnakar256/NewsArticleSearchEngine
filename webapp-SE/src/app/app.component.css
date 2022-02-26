@@ -1,10 +1,22 @@
 @import url('https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'); 
 
 .bg {
-    background-color: whitesmoke;
+    /* background-color: whitesmoke; */
     padding: 1rem;
 }
 
 .radio-label{
     margin-left: 0.5rem;
+}
+
+.center {
+    margin-top: 30vh;
+}
+
+.input-box {
+    padding: 0 20vh;
+}
+
+.center-align{
+    margin-left: 45%;
 }
