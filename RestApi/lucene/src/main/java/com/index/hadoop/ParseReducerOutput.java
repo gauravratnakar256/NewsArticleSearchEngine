@@ -1,29 +1,30 @@
 package com.index.hadoop;
 
+import org.springframework.data.mongodb.core.MongoTemplate;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class ParseReducerOutput {
+    private final MongoTemplate mongoTemplate;
 
-    private static final Map<String, ArrayList<String[]>> map = new HashMap<>();
 
-    public ParseReducerOutput(String invertedIndexPath) {
+    public ParseReducerOutput(String invertedIndexPath, MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
         readInvertedTextFile(invertedIndexPath);
     }
 
-    public static Map<String, ArrayList<String[]>> getMap() {
-        return map;
-    }
-
-    private static void readInvertedTextFile(String invertedIndexPath) {
+    private void readInvertedTextFile(String invertedIndexPath) {
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(invertedIndexPath));
-            Stream<String> lines = bufferedReader.lines();
-            lines.parallel().forEach((line -> addDataToMap(line)));
+            String line = bufferedReader.readLine();
+            while(line != null){
+                addData(line);
+                line = bufferedReader.readLine();
+            }
             bufferedReader.close();
         } catch (Exception ex) {
             System.out.println("Error while reading the file!");
@@ -32,21 +33,35 @@ public class ParseReducerOutput {
         }
     }
 
-    private static void addDataToMap(String line) {
+    private void addData(String line) {
         if (line != null) {
+            line = line.trim();
             String[] docs = line.split("\\s+");
-            ArrayList<String[]> list;
-
-            if (!map.containsKey(docs[0])) list = new ArrayList<>();
-            else list = map.get(docs[0]);
-
-            for (int i = 1; i < docs.length - 1; i++) {
+            if (docs[0].equals("apprise")) {
+                System.out.println("Here");
+            }
+            if (docs[0].equals("06'08'10'12'14'16'18'2040")){
+                System.out.println("Here");
+            }
+            List<IndexData> list = new ArrayList<IndexData>();
+            for (int i = 1; i < docs.length; i++) {
                 String doc = docs[i];
+                doc = doc.trim();
                 String[] data = doc.split(":");
-                list.add(data);
+                IndexData index = new IndexData(Integer.parseInt(data[0]), Integer.parseInt(data[1]), Integer.parseInt(data[2]));
+                list.add(index);
             }
 
-            map.put(docs[0], list);
+            saveDataInDB(new WordIndex(docs[0], list));
+        }
+    }
+
+    private void saveDataInDB(WordIndex data) {
+        try {
+            mongoTemplate.save(data);
+            System.out.println("Successfully saved data for " + data.getWord() + " to DB");
+        } catch (Exception ex) {
+            System.out.println("Error while saving" + data.getWord() + " to DB!");
         }
     }
 }

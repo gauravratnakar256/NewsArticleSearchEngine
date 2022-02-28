@@ -61,5 +61,12 @@ public class QueryController {
         return wordIndex;
     }
 
+    @CrossOrigin(origins = "*")
+    @GetMapping("/hadoop/buildInvertedIndex")
+    public void buildInvertedIndex() throws ParseException, IOException {
+        System.out.println("Initiating inverted index building process...");
+        ParseReducerOutput parseReducerOutput = new ParseReducerOutput(hadoopIndexPath, mongoTemplate);
+        System.out.println("Inverted index build completed!");
+    }
 
 }
