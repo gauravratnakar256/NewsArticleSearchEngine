@@ -2,6 +2,7 @@ package com.search.nyt;
 
 import com.index.hadoop.Articles;
 import com.index.hadoop.GetArticles;
+import com.index.hadoop.ParseReducerOutput;
 import com.index.hadoop.WordIndex;
 import com.index.lucene.LuceneIndexReader;
 import org.apache.lucene.analysis.LowerCaseFilter;
@@ -33,8 +34,12 @@ import java.util.List;
 public class QueryController {
 
     private final MongoTemplate mongoTemplate;
+
     @Value("${index.lucene.path}")
     String luceneIndexPath;
+
+    @Value("${index.hadoop.path}")
+    String hadoopIndexPath;
 
     public QueryController(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
@@ -44,7 +49,6 @@ public class QueryController {
     @GetMapping("/lucene/fetch")
     public JSONArray getArticlesUsingLucene(@RequestParam(name = "query") String query, @RequestParam(name = "skip") int skip) throws ParseException, IOException {
 
-        String luceneIndexPath = "C:\\IRProject\\Index";
 
         LuceneIndexReader reader = new LuceneIndexReader(luceneIndexPath);
         JSONArray articles = reader.search(query, skip);
@@ -62,12 +66,16 @@ public class QueryController {
         Query indexQuery = new Query();
         indexQuery.addCriteria(Criteria.where("word").in(words));
         List<WordIndex> wordIndex = mongoTemplate.find(indexQuery, WordIndex.class);
+        List<Articles> articles = new ArrayList<>();
+
+        if(wordIndex.isEmpty() || wordIndex.size() == 0)
+            return articles;
 
         List<Integer> articlesIds = new GetArticles(wordIndex).getArticlesId(skip);
 
         Query articleFetchQuery = new Query();
         articleFetchQuery.addCriteria(Criteria.where("articleID").in(articlesIds));
-        List<Articles> articles = mongoTemplate.find(articleFetchQuery, Articles.class);
+        articles = mongoTemplate.find(articleFetchQuery, Articles.class);
 
         return articles;
     }
@@ -99,12 +107,12 @@ public class QueryController {
     }
 
 
-//    @CrossOrigin(origins = "*")
-//    @GetMapping("/hadoop/buildInvertedIndex")
-//    public void buildInvertedIndex() throws ParseException, IOException {
-//        System.out.println("Initiating inverted index building process...");
-//        ParseReducerOutput parseReducerOutput = new ParseReducerOutput(hadoopIndexPath, mongoTemplate);
-//        System.out.println("Inverted index build completed!");
-//    }
+    @CrossOrigin(origins = "*")
+    @GetMapping("/hadoop/buildInvertedIndex")
+    public void buildInvertedIndex() throws ParseException, IOException {
+        System.out.println("Initiating inverted index building process...");
+        ParseReducerOutput parseReducerOutput = new ParseReducerOutput(hadoopIndexPath, mongoTemplate);
+        System.out.println("Inverted index build completed!");
+    }
 
 }

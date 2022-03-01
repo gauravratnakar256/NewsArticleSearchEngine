@@ -9,7 +9,7 @@ import { Data } from './data.model';
 })
 export class Service {
 
-    private baseUrl: string = "http://localhost:8080/"
+    private baseUrl: string = "http://137.184.87.160:8080/"
     constructor(private http: HttpClient) { }
 
     public fetchbylucene(query: string, skip: number) {
