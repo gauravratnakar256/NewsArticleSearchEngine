@@ -1,9 +1,5 @@
 package com.index.lucene;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -18,12 +14,16 @@ import org.apache.lucene.store.FSDirectory;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class LuceneIndexReader {
 
-    private String indexPath = null;
     DirectoryReader indexReader = null;
     Directory directory = null;
     int articlesToFetch = 10;
+    private String indexPath = null;
 
     public LuceneIndexReader(String indexPath) {
         super();

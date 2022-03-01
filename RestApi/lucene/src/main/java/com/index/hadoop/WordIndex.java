@@ -2,10 +2,13 @@ package com.index.hadoop;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Document("WordIndex")
-public class WordIndex {
+public class WordIndex implements Serializable {
+
+    private static final long serialVersionUID = -5294188737237640015L;
 
     String word;
     List<IndexData> index;

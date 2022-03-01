@@ -1,6 +1,11 @@
 package com.index.hadoop;
 
-public class IndexData {
+import java.io.Serializable;
+
+public class IndexData implements Serializable {
+
+    private static final long serialVersionUID = -5294188737237640025L;
+
     int documentId;
     int termFrequency;
     int documentSize;

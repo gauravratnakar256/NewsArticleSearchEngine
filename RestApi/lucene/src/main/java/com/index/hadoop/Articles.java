@@ -1,13 +1,13 @@
 package com.index.hadoop;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.MongoId;
 
-import java.util.Date;
+import java.io.Serializable;
 
-@Document("test")
-public class Articles {
+@Document("articles")
+public class Articles implements Serializable {
+
+    private static final long serialVersionUID = -5294188737237640016L;
 
     int articleID;
     String articleUrl;

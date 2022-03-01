@@ -6,7 +6,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class ParseReducerOutput {
     private final MongoTemplate mongoTemplate;
@@ -21,7 +20,7 @@ public class ParseReducerOutput {
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(invertedIndexPath));
             String line = bufferedReader.readLine();
-            while(line != null){
+            while (line != null) {
                 addData(line);
                 line = bufferedReader.readLine();
             }
@@ -40,7 +39,7 @@ public class ParseReducerOutput {
             if (docs[0].equals("apprise")) {
                 System.out.println("Here");
             }
-            if (docs[0].equals("06'08'10'12'14'16'18'2040")){
+            if (docs[0].equals("06'08'10'12'14'16'18'2040")) {
                 System.out.println("Here");
             }
             List<IndexData> list = new ArrayList<IndexData>();
